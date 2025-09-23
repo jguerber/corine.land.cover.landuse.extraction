@@ -103,6 +103,8 @@ extract_compositions <- function(points_df, map, buffer_radius_m,
 #' @param buffer_radius_m Radius length in meters of the circular buffer
 #' centered on the coordinates of the points from which to extract the land
 #' cover composition.
+#' @param points_crs Identifier of the coordinate reference system (CRS)
+#' associated with the coordinates of the input points. Default is EPSG:4326.
 #'
 #' @returns An [extract_compositions()] output. Data frame containing the
 #' relative compositions of the buffers centered around the input points. Each
@@ -114,11 +116,13 @@ extract_compositions <- function(points_df, map, buffer_radius_m,
 #' @examples
 #' buffer_radius_m <- 1
 #' get_year_compositions(example_points_df, 2012, buffer_radius_m)
-get_year_compositions <- function(points_df, input_year, buffer_radius_m) {
+get_year_compositions <- function(points_df, input_year,
+                                  buffer_radius_m, points_crs = 4326) {
   filtered_df <- points_df %>%
     dplyr::filter(clc_year == input_year)
   map <- read_clc_map(input_year)
-  compositions_df <- extract_compositions(filtered_df, map, buffer_radius_m)
+  compositions_df <- extract_compositions(filtered_df, map, 
+                                          buffer_radius_m, points_crs)
   return(compositions_df)
 }
 
@@ -149,6 +153,8 @@ get_year_compositions <- function(points_df, input_year, buffer_radius_m) {
 #' selected for date between 2013 and 2018, 2018 will be selected for the rest.
 #' `input_clc_year` can also be an available year from which to process all data
 #' points.
+#' @param points_crs Identifier of the coordinate reference system (CRS)
+#' associated with the coordinates of the input points. Default is EPSG:4326.
 #'
 #' @returns An [extract_compositions()] output. Data frame containing the
 #' relative compositions of the buffers centered around the input points. Each
@@ -173,7 +179,8 @@ get_year_compositions <- function(points_df, input_year, buffer_radius_m) {
 #'   example_points_df, buffer_radius_m, input_clc_year = 2012
 #' )
 get_full_compositions <- function(points_df, buffer_radius_m,
-                                  input_clc_year = "auto") {
+                                  input_clc_year = "auto",
+                                  points_crs = 4326) {
   if (input_clc_year == "auto") {
     points_df$clc_year <- sapply(points_df$year, get_clc_year)
   } else {
@@ -185,7 +192,8 @@ get_full_compositions <- function(points_df, buffer_radius_m,
   year_list <- unique(points_df$clc_year)
   compositions_by_year <- lapply(
     year_list, get_year_compositions,
-    points_df = points_df, buffer_radius_m = buffer_radius_m
+    points_df = points_df, buffer_radius_m = buffer_radius_m,
+    points_crs = points_crs
   )
   full_compositions_df <- compositions_by_year %>%
     dplyr::bind_rows() %>%
