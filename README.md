@@ -12,7 +12,7 @@ Pour le sol français métropolitain, les données peuvent être téléchargés 
 - 2012 : https://www.donnees.statistiques.developpement-durable.gouv.fr/donneesCLC/CLC/millesime/CLC12_FR_RGF_SHP.zip
 - 2018 : https://www.data.gouv.fr/api/1/datasets/r/196a6f96-f558-4dec-9bdc-1359d32dc5d1
 
-Pour que le package soit entièrement opérationnel, tous les millésimes d'intérêt doivent être téléchargés et décompressés dans des sous dossiers dont les noms correspondent aux années.
+Pour que le package soit entièrement opérationnel, tous les millésimes d'intérêt doivent être téléchargées et décompressés dans des sous dossiers dont les noms correspondent aux années.
 ```
 corine_land_cover_data/
   2000/
@@ -36,3 +36,4 @@ set_corine_land_cover_path(CORINE_LAND_COVER_PATH)
 buffer_radius_m <- 250
 compositions_df <- get_full_compositions(points_df, buffer_radius_m, input_clc_year = "auto")
 ```
+
