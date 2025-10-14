@@ -69,7 +69,7 @@ get_data_format <- function(data_folder) {
 read_clc_map_shapefile <- function(data_folder) {
   shp_file <- list.files(
     path = data_folder, full.names = TRUE,
-    recursive = TRUE, pattern = "CLC\\d{2}_.*\\.shp"
+    recursive = TRUE, pattern = "CLC(\\d{2}|\\d{4})_.*\\.shp"
   )
   map <- sf::st_read(shp_file, agr = "constant", quiet = TRUE)
   return(map)
