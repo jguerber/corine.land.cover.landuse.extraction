@@ -4,7 +4,12 @@
 \alias{get_full_compositions}
 \title{Extract the land cover composition for the complete point data frame}
 \usage{
-get_full_compositions(points_df, buffer_radius_m, input_clc_year = "auto")
+get_full_compositions(
+  points_df,
+  buffer_radius_m,
+  input_clc_year = "auto",
+  points_crs = 4326
+)
 }
 \arguments{
 \item{points_df}{Data frame containing all the locations of the points from
@@ -24,6 +29,9 @@ the \code{year} value. If 2012 and 2018 are the available years, 2012 will be
 selected for date between 2013 and 2018, 2018 will be selected for the rest.
 \code{input_clc_year} can also be an available year from which to process all data
 points.}
+
+\item{points_crs}{Identifier of the coordinate reference system (CRS)
+associated with the coordinates of the input points. Default is EPSG:4326.}
 }
 \value{
 An \code{\link[=extract_compositions]{extract_compositions()}} output. Data frame containing the

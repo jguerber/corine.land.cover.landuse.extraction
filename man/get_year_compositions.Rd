@@ -4,7 +4,12 @@
 \alias{get_year_compositions}
 \title{Extract the land cover composition for a given year}
 \usage{
-get_year_compositions(points_df, input_year, buffer_radius_m)
+get_year_compositions(
+  points_df,
+  input_year,
+  buffer_radius_m,
+  points_crs = 4326
+)
 }
 \arguments{
 \item{points_df}{Data frame containing all the locations of the points from
@@ -20,6 +25,9 @@ filter \code{points_df}.}
 \item{buffer_radius_m}{Radius length in meters of the circular buffer
 centered on the coordinates of the points from which to extract the land
 cover composition.}
+
+\item{points_crs}{Identifier of the coordinate reference system (CRS)
+associated with the coordinates of the input points. Default is EPSG:4326.}
 }
 \value{
 An \code{\link[=extract_compositions]{extract_compositions()}} output. Data frame containing the
