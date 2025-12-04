@@ -121,8 +121,17 @@ read_clc_map_gpkg <- function(data_folder) {
 read_clc_map <- function(year, clc_path = getOption("clc_path")) {
   year_folder <- file.path(clc_path, year)
   if (get_data_format(year_folder) == "shapefile") {
-    return(read_clc_map_shapefile(year_folder))
+    return(attempt_read(read_clc_map_shapefile, year_folder))
   } else {
-    return(read_clc_map_gpkg(year_folder))
+    return(attempt_read(read_clc_map_gpkg, year_folder))
   }
+}
+
+attempt_read <- function(f, path) {
+  tryCatch(
+    f(path),
+    error = function(e) {
+      stop("Error occured for file: ", year_folder)
+    }
+  )
 }
