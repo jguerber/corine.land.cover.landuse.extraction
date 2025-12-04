@@ -120,7 +120,7 @@ get_year_compositions <- function(points_df, input_year,
                                   buffer_radius_m, points_crs = 4326) {
   filtered_df <- points_df %>%
     dplyr::filter(clc_year == input_year)
-  map <- st_make_valid(read_clc_map(input_year))
+  map <- sf::st_make_valid(read_clc_map(input_year))
   compositions_df <- extract_compositions(filtered_df, map,
                                           buffer_radius_m, points_crs)
   return(compositions_df)
