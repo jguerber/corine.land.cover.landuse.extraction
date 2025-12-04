@@ -129,9 +129,9 @@ read_clc_map <- function(year, clc_path = getOption("clc_path")) {
 
 attempt_read <- function(f, path) {
   tryCatch(
-    f(path),
+    {f(path)},
     error = function(e) {
-      stop("Error occured for file: ", year_folder)
+      stop("Error reading spatial data file: ", path)
     }
   )
 }
