@@ -131,7 +131,7 @@ attempt_read <- function(f, path) {
   tryCatch(
     {f(path)},
     error = function(e) {
-      stop("Error reading spatial data file: ", path)
+      stop(paste0("Error reading spatial data file: ", path))
     }
   )
 }
