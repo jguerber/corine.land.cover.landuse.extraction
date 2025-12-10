@@ -127,6 +127,17 @@ read_clc_map <- function(year, clc_path = getOption("clc_path")) {
   }
 }
 
+#' Attempt to read a given path with a given function
+#' 
+#' Used in error handling to replace sf::st_read error messages
+#' 
+#' @param f a function
+#' @param path a path
+#' 
+#' @keywords internal
+#' 
+#' @examples
+#' attempt_read(read.csv, "filedoesnotexist.csv") # throws a custom error instead of read.csv error
 attempt_read <- function(f, path) {
   tryCatch(
     {f(path)},
