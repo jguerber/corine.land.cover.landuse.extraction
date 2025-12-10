@@ -53,11 +53,11 @@ extract_compositions <- function(points_df, clc_map, buffer_radius_m,
   ## Compute buffer compositions
   buffers <- sf::st_buffer(points_sf, buffer_radius_m)
 
-    compositions <- buffers %>%
-      st_intersection_faster(clc_map) %>% # use a faster st_intersection
-        dplyr::mutate(area = sf::st_area(.)) %>%
-        dplyr::rename_with(~ "code", dplyr::matches("^code", ignore.case = TRUE))
-    
+  compositions <- buffers %>%
+    st_intersection_faster(clc_map) %>% # use a faster st_intersection
+      dplyr::mutate(area = sf::st_area(.)) %>%
+      dplyr::rename_with(~ "code", dplyr::matches("^code", ignore.case = TRUE))
+
   ## Combine by point_id and land cover type
   code_clc_list <- unique(compositions$code)
   compositions_df <- sf::st_drop_geometry(points_sf)
@@ -189,7 +189,7 @@ get_full_compositions <- function(points_df, buffer_radius_m,
     check_clc_year(input_clc_year)
     points_df$clc_year <- input_clc_year
   }
-  
+
   # warn the user that point_id is not meant to vary with time
   if (any(stringr::str_detect(points_df$point_id, "(19|20)\\d{2}"))) {
     warning("point_id looks like it contains dates. You may be requiring unneeded spatial intersects")
