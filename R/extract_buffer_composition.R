@@ -194,12 +194,20 @@ get_full_compositions <- function(points_df, buffer_radius_m,
     check_clc_year(input_clc_year)
     points_df$clc_year <- input_clc_year
   }
-  points_df <- points_df %>%
-    dplyr::select(point_id, longitude, latitude, clc_year)
+  
+  # warn the user that point_id is not meant to vary with time
+  if (any(stringr::str_detect(points_df$point_id, "(19|20)\\d{2}"))) {
+    warning("point_id looks like it contains dates. You may be requiring unneeded spatial intersects")
+  }
+  
+  points_to_extract <- points_df %>%
+    dplyr::select(point_id, longitude, latitude, clc_year) %>% 
+    unique
+
   year_list <- unique(points_df$clc_year)
   compositions_by_year <- lapply(
     year_list, get_year_compositions,
-    points_df = points_df, buffer_radius_m = buffer_radius_m,
+    points_df = points_to_extract, buffer_radius_m = buffer_radius_m,
     points_crs = points_crs
   )
   full_compositions_df <- compositions_by_year %>%
@@ -208,6 +216,7 @@ get_full_compositions <- function(points_df, buffer_radius_m,
       dplyr::across(dplyr::where(is.numeric), ~ replace(., is.na(.), 0))) %>%
     dplyr::select(
       -tidyselect::matches("\\d+"),
-      sort(names(.)[tidyselect::matches("\\d+")]))
+      sort(names(.)[tidyselect::matches("\\d+")])) %>% 
+    dplyr::left_join(points_df, ., by = c("point_id", "clc_year"))
   return(full_compositions_df)
 }
