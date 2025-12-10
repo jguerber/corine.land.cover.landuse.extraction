@@ -121,8 +121,28 @@ read_clc_map_gpkg <- function(data_folder) {
 read_clc_map <- function(year, clc_path = getOption("clc_path")) {
   year_folder <- file.path(clc_path, year)
   if (get_data_format(year_folder) == "shapefile") {
-    return(read_clc_map_shapefile(year_folder))
+    return(attempt_read(read_clc_map_shapefile, year_folder))
   } else {
-    return(read_clc_map_gpkg(year_folder))
+    return(attempt_read(read_clc_map_gpkg, year_folder))
   }
+}
+
+#' Attempt to read a given path with a given function
+#' 
+#' Used in error handling to replace sf::st_read error messages
+#' 
+#' @param f a function
+#' @param path a path
+#' 
+#' @keywords internal
+#' 
+#' @examples
+#' attempt_read(read.csv, "filedoesnotexist.csv") # throws a custom error instead of read.csv error
+attempt_read <- function(f, path) {
+  tryCatch(
+    {f(path)},
+    error = function(e) {
+      stop(paste0("Error reading spatial data file: ", path))
+    }
+  )
 }
