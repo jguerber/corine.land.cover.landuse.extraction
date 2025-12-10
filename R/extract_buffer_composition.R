@@ -53,16 +53,11 @@ extract_compositions <- function(points_df, clc_map, buffer_radius_m,
   ## Compute buffer compositions
   buffers <- sf::st_buffer(points_sf, buffer_radius_m)
 
-  # performance tricks (i) and (ii)
-  compositions <- buffers %>% # (i) map on buffers
-    split(1:nrow(.)) %>% 
-    purrr::map(function(b) {
-      st_intersection_faster(b, clc_map) %>% # (ii) use a faster st_intersection
+    compositions <- buffers %>%
+      st_intersection_faster(clc_map) %>% # use a faster st_intersection
         dplyr::mutate(area = sf::st_area(.)) %>%
         dplyr::rename_with(~ "code", dplyr::matches("^code", ignore.case = TRUE))
-    }) %>% 
-    purrr::list_rbind()
-
+    
   ## Combine by point_id and land cover type
   code_clc_list <- unique(compositions$code)
   compositions_df <- sf::st_drop_geometry(points_sf)
