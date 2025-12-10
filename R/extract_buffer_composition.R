@@ -42,19 +42,26 @@
 #'   map,
 #'   buffer_radius_m
 #' )
-extract_compositions <- function(points_df, map, buffer_radius_m,
+extract_compositions <- function(points_df, clc_map, buffer_radius_m,
                                  points_crs = 4326) {
   ## Transform points
   points_sf <- points_df %>%
     sf::st_as_sf(coords = c("longitude", "latitude"),
                  crs = sf::st_crs(points_crs), agr = "constant") %>%
-    sf::st_transform(crs = sf::st_crs(map))
+    sf::st_transform(crs = sf::st_crs(clc_map))
 
   ## Compute buffer compositions
   buffers <- sf::st_buffer(points_sf, buffer_radius_m)
-  compositions <- sf::st_intersection(map, buffers) %>%
-    dplyr::mutate(area = sf::st_area(.)) %>%
-    dplyr::rename_with(~ "code", dplyr::matches("^code", ignore.case = TRUE))
+
+  # performance tricks (i) and (ii)
+  compositions <- buffers %>% # (i) map on buffers
+    split(1:nrow(.)) %>% 
+    purrr::map(function(b) {
+      st_intersection_faster(b, clc_map) %>% # (ii) use a faster st_intersection
+        dplyr::mutate(area = sf::st_area(.)) %>%
+        dplyr::rename_with(~ "code", dplyr::matches("^code", ignore.case = TRUE))
+    }) %>% 
+    purrr::list_rbind()
 
   ## Combine by point_id and land cover type
   code_clc_list <- unique(compositions$code)
@@ -120,7 +127,7 @@ get_year_compositions <- function(points_df, input_year,
                                   buffer_radius_m, points_crs = 4326) {
   filtered_df <- points_df %>%
     dplyr::filter(clc_year == input_year)
-  map <- read_clc_map(input_year)
+  map <- sf::st_make_valid(read_clc_map(input_year))
   compositions_df <- extract_compositions(filtered_df, map, 
                                           buffer_radius_m, points_crs)
   return(compositions_df)
