@@ -53,11 +53,11 @@ st_intersection_faster <- function(x,y,...){
 
   # subset with st_intersects
   y_subset <-
-    st_intersects(x, y) %>%
+    sf::st_intersects(x, y) %>%
     unlist() %>%
     unique() %>%
     sort() %>%
     {y[.,]}
 
-  st_intersection(x, y_subset,...)
+  sf::st_intersection(x, y_subset,...)
 }
