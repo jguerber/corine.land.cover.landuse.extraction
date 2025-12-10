@@ -43,3 +43,21 @@ aggregate_to_level_i <- function(level_3_df, i) {
       dplyr::select(level_3_df, -dplyr::all_of(level_3_names)), .)
   return(level_i_df)
 }
+
+#' Faster version of st::st_intercetion
+#' 
+#' https://github.com/r-spatial/sf/issues/801#issuecomment-1279636073
+#' 
+#' @author Gordon McDonald
+st_intersection_faster <- function(x,y,...){
+
+  # subset with st_intersects
+  y_subset <-
+    st_intersects(x, y) %>%
+    unlist() %>%
+    unique() %>%
+    sort() %>%
+    {y[.,]}
+
+  st_intersection(x, y_subset,...)
+}
